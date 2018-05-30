@@ -23,18 +23,17 @@ namespace Kama{
 			std::set<std::string> stopwordList;
 			Node parseMeCabNode(const MeCab::Node* node, unsigned int nbest);
             const char* defaultDicPath = "/usr/local/lib/mecab/dic/mecab-ko-dic";
-
-		public:
-			Tagger(const char* userDicPath){
-                std::string dicPath;
-                dicPath.append(" -d ");
-                dicPath.append(userDicPath);
-				this->mcTagger = MeCab::createTagger((const char*)dicPath.c_str());
+			
+			void initialize(const char* dicPath){
+				std::string dicPathOption;
+                dicPathOption.append(" -d ");
+                dicPathOption.append(dicPath);
+				this->mcTagger = MeCab::createTagger((const char*)dicPathOption.c_str());
 				this->mcLattice = MeCab::createLattice();
 				CHECK_ERROR(this->mcTagger);
-			};
+			}
 
-			~Tagger(){
+			void finalize(){
 				if(!this->mcTagger){
 					delete this->mcTagger;
 					this->mcTagger = NULL;
@@ -45,6 +44,19 @@ namespace Kama{
 				}
 				this->clearStopwordList();
 			}
+
+		public:
+			Tagger(){
+				this->initialize((const char*)(this->defaultDicPath));
+			};
+
+			Tagger(const char* userDicPath){
+            	this->initialize(userDicPath);
+			};
+
+			~Tagger(){
+				this->finalize();		
+			};
 
 			std::vector<Kama::Node>* parse(const char* str);
 			

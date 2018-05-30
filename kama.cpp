@@ -17,6 +17,7 @@ namespace Kama{
 		tNode.surface[node->length] = '\0';
 		if(isStopword(tNode.surface)){
 			free(tNode.surface);
+			tNode.surface = NULL;
 			return tNode;
 		}
 		tNode.feature = (char*)(node->feature);
@@ -96,10 +97,13 @@ namespace Kama{
 
 }
 
-
 int main(int argc, char** argv)
 {
-	Kama::Tagger* tagger = new Kama::Tagger("/usr/local/lib/mecab/dic/mecab-ko-dic");
+	Kama::Tagger* tagger = new Kama::Tagger();
+	if(argc < 2){
+		std::cout << "usage : " << argv[0] << " [parse string]" << std::endl;
+		exit(0);
+	}
 	std::vector<Kama::Node> *nodeVector = tagger->parse((const char*)(argv[1]));
 	for(std::vector<Kama::Node>::const_iterator i = nodeVector->begin(); i != nodeVector->end(); i++){
 		std::cout << "[" << i->nbest << "] : " << i->id << ' ' << i->surface << ' ' << i->feature << std::endl;

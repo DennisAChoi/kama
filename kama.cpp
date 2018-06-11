@@ -2,41 +2,42 @@
 #include <iostream>
 #include <string.h>
 #include <stdlib.h>
-
+#include <string>
+#include <fstream>
 
 namespace Kama{
 
 	Node Tagger::parseMeCabNode(const MeCab::Node* node, unsigned int nbest){
 		Node tNode;
-		tNode.surface = NULL;
+		tNode.surface[0] = '\0';
+		tNode.feature[0] = '\0';
 		if(node->length == 0){
 			return tNode;
 		}
-		tNode.surface = (char*)malloc(sizeof(char)*(node->length+1));
+		// tNode.surface = (char*)malloc(sizeof(char)*(node->length+1));
 		strncpy(tNode.surface, node->surface, node->length);
 		tNode.surface[node->length] = '\0';
 		if(isStopword(tNode.surface)){
-			free(tNode.surface);
-			tNode.surface = NULL;
+			tNode.surface[0] = '\0';
 			return tNode;
 		}
-		tNode.feature = (char*)(node->feature);
+		//tNode.feature = (char*)(node->feature);
+		strcpy(tNode.feature, node->feature);
 		tNode.nbest = nbest;
 		tNode.id = node->id;
 
 		return tNode;
 	}
 
-	std::vector<Kama::Node>* Tagger::parse(const char* str){
+	std::vector<Kama::Node> Tagger::parse(const char* str){
 		return parse(str, 1);
 	}
 
-	std::vector<Kama::Node>* Tagger::parse(const char* str, unsigned int nbest){
+	std::vector<Kama::Node> Tagger::parse(const char* str, unsigned int nbest){
+		std::vector<Kama::Node> nodeVector;
 		if(str == NULL){
-			return NULL;
+			return nodeVector;
 		}
-
-		std::vector<Kama::Node> *nodeVector = new std::vector<Kama::Node>();
 
 		this->mcLattice->set_request_type(MECAB_NBEST);
 		this->mcLattice->set_sentence(str);
@@ -55,12 +56,13 @@ namespace Kama{
 					continue;
 				}
 				Kama::Node tNode = parseMeCabNode(node, tNbest);
-				if(tNode.surface == NULL){
+				if(strlen(tNode.surface) == 0){
 					continue;
 				}
-				nodeVector->push_back(tNode);
+				nodeVector.push_back(tNode);
 			}	
 		}
+		this->mcLattice->clear();
 		return nodeVector;
 	}
 
@@ -104,8 +106,8 @@ int main(int argc, char** argv)
 		std::cout << "usage : " << argv[0] << " [parse string]" << std::endl;
 		exit(0);
 	}
-	std::vector<Kama::Node> *nodeVector = tagger->parse((const char*)(argv[1]));
-	for(std::vector<Kama::Node>::const_iterator i = nodeVector->begin(); i != nodeVector->end(); i++){
+	std::vector<Kama::Node> nodeVector = tagger->parse((const char*)(argv[1]));
+	for(std::vector<Kama::Node>::const_iterator i = nodeVector.begin(); i != nodeVector.end(); i++){
 		std::cout << "[" << i->nbest << "] : " << i->id << ' ' << i->surface << ' ' << i->feature << std::endl;
 	}
 	delete tagger;

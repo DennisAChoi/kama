@@ -11,8 +11,8 @@ namespace Kama{
 	typedef struct _Node {
 		unsigned int id;
 		unsigned int nbest;
-		char* surface;
-		char* feature;
+		char surface[1024];
+		char feature[1024*4];
 	} Node;
 	
 	class Tagger{
@@ -58,9 +58,9 @@ namespace Kama{
 				this->finalize();		
 			};
 
-			std::vector<Kama::Node>* parse(const char* str);
+			std::vector<Kama::Node> parse(const char* str);
 			
-			std::vector<Kama::Node>* parse(const char* str, unsigned int nbest);
+			std::vector<Kama::Node> parse(const char* str, unsigned int nbest);
 
 			void setStopwordList(std::list<const char*> stopwordList);
 

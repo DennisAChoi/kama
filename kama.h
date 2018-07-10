@@ -18,11 +18,11 @@ namespace Kama{
 	class Tagger{
 
 		private:
-			MeCab::Tagger* mcTagger = NULL;	
-			MeCab::Lattice* mcLattice = NULL;
+			MeCab::Tagger* mcTagger;	
+			MeCab::Lattice* mcLattice;
 			std::set<std::string> stopwordList;
 			Node parseMeCabNode(const MeCab::Node* node, unsigned int nbest);
-            const char* defaultDicPath = "/usr/local/lib/mecab/dic/mecab-ko-dic";
+            const char* defaultDicPath; 
 			
 			void initialize(const char* dicPath){
 				std::string dicPathOption;

@@ -46,7 +46,7 @@ namespace Kama{
 			}
 
 		public:
-			Tagger(){
+			Tagger(): mcTagger(NULL), mcLattice(NULL), defaultDicPath("/usr/local/lib/mecab/dic/mecab-ko-dic"){
 				this->initialize((const char*)(this->defaultDicPath));
 			};
 

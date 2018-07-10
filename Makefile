@@ -6,7 +6,7 @@ INSTALL_PATH=.
 all: cpp python install
 
 clean:
-	rm lib build *.cxx -rf
+	rm lib lib64 build *.cxx -rf
 	rm $(PREFIX).py $(PREFIX) -rf
 	
 python:	
